@@ -5,8 +5,8 @@ $(function() {
 	var ul = $('.list');
 
 	var btn = $('.btn');
-
-	function func(text) {
+	//请求数据
+	function getdata(text) {
 		$.ajax({
 			type: "get",
 			url: "http://www.tuling123.com/openapi/api", //Api接口
@@ -17,7 +17,6 @@ $(function() {
 
 			},
 			success: function(res) {
-				console.log(res);
 				//创建节点
 				var li = $('<li/>');
 				var span = $('<span/>');
@@ -25,7 +24,7 @@ $(function() {
 				span.appendTo(li);
 				li.appendTo(ul).addClass('list_left');
 				li[0].scrollIntoView(); //li[0]转化为原生，这里是让滚动条一直滚到可视区域
-				if(res.url) { //如果搜索是图片，就执行这里
+				if(res.url) { //如果返回有图片，就执行这里
 					span.html('正在为您跳转中...');
 					span.appendTo(li);
 					li.appendTo(ul).addClass('list_left');
@@ -37,30 +36,34 @@ $(function() {
 			}
 		});
 	}
+	//发送消息
+	function sendmsg(msgtext){
+		var li = $('<li/>');
+		var span = $('<span/>');
+		span.html(msgtext);
+		span.appendTo(li);
+		li.appendTo(ul).addClass('list_right');
+		getdata(msgtext);
+		$('textarea').val('');
+	}
 	
 	//回车发送
 	$(document).on('keydown', function(e) {
 		if(e.keyCode == 13) {
-			var text = $('textarea').val();
-			var li = $('<li/>');
-			var span = $('<span/>');
-			span.html(text);
-			span.appendTo(li);
-			li.appendTo(ul).addClass('list_right');
-			func(text);
-			$('textarea').val('');
+			var msgtext = $('textarea').val();
+			if (msgtext=='') {
+				return ;
+			}
+			sendmsg(msgtext);
 		}
 
-	})
+	});
 	//点击发送
 	btn.on('click',function(){
-		var text = $('textarea').val();
-			var li = $('<li/>');
-			var span = $('<span/>');
-			span.html(text);
-			span.appendTo(li);
-			li.appendTo(ul).addClass('list_right');
-			func(text);
-			$('textarea').val('');
-	})
+		var msgtext = $('textarea').val();
+		if (msgtext=='') {
+			return ;
+		}
+		sendmsg(msgtext);
+	});
 })
